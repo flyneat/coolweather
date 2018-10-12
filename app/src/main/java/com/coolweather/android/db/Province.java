@@ -22,19 +22,19 @@ public class Province extends LitePalSupport{
         this.id = id;
     }
 
-    public String getName() {
+    public String getProvinceName() {
         return provinceName;
     }
 
-    public void setName(String name) {
+    public void setProvinceName(String name) {
         this.provinceName = name;
     }
 
-    public int getCode() {
+    public int getProvinceCode() {
         return provinceCode;
     }
 
-    public void setCode(int code) {
+    public void setProvinceCode(int code) {
         this.provinceCode = code;
     }
 }

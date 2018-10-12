@@ -12,7 +12,7 @@ public class County extends LitePalSupport {
     private int cityCode;
 
     /** 天气代码：用于查询天气信息 */
-    private String weatherCode;
+    private String weatherId;
 
     public int getId() {
         return id;
@@ -46,11 +46,11 @@ public class County extends LitePalSupport {
         this.cityCode = cityCode;
     }
 
-    public String getWeatherCode() {
-        return weatherCode;
+    public String getWeatherId() {
+        return weatherId;
     }
 
-    public void setWeatherCode(String weatherCode) {
-        this.weatherCode = weatherCode;
+    public void setWeatherId(String weatherId) {
+        this.weatherId = weatherId;
     }
 }
