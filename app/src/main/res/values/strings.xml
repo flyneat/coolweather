@@ -7,4 +7,7 @@
     <string name="pm2.5_index">PM2.5指数</string>
     <string name="aqi">空气质量指数</string>
     <string name="life_suggestion">生活建议</string>
+    <string name="location">选择城市</string>
+    <string name="setting">设置</string>
+
 </resources>

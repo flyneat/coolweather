@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.coolweather.android.R;
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.ui.MainActivity;
 import com.coolweather.android.ui.WeatherActivity;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
@@ -31,6 +34,7 @@ import org.litepal.LitePal;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,8 +51,6 @@ public class ChooseAreaFragment extends Fragment {
     private TextView titleTv;
 
     private ListView areaListView;
-
-    private ProgressDialog progressDialog = null;
 
     private ArrayAdapter<String> adapter;
 
@@ -126,13 +128,31 @@ public class ChooseAreaFragment extends Fragment {
                     case LEVEL_CITY:
                         selectedCity = cityList.get(position);
                         queryCounties();
-                         break;
+                        break;
                     case LEVEL_COUNTY:
-                        /* 启动weather activity ，显示选定的区域的天气情况 */
-                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
-                        intent.putExtra("weather_id", countyList.get(position).getWeatherId());
-                        mActivity.startActivity(intent);
-                        // mActivity.finish();
+                        Activity activity = getActivity();
+                        String weatheId = countyList.get(position).getWeatherId();
+                        if (activity instanceof MainActivity) {
+                            /* 启动weather activity ，显示选定的区域的天气情况 */
+                            Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                            intent.putExtra("weather_id", weatheId);
+                            mActivity.startActivity(intent);
+                            // mActivity.finish();
+                        } else if (activity instanceof WeatherActivity) {
+                            WeatherActivity weatherActivity = (WeatherActivity) activity;
+
+                            // 移除选择地址的fragment view
+                            weatherActivity.sideLayout.removeViewAt(1);
+                            // 恢复显示滑动菜单
+                            weatherActivity.mNavView.setVisibility(View.VISIBLE);
+                            // 关闭侧边栏
+                            weatherActivity.drawerLayout.closeDrawers();
+
+                            // 显示新选择的地区的天气信息
+                            weatherActivity.swipeRefreshLayout.setRefreshing(true);
+                            weatherActivity.requestWeather(weatheId);
+                            weatherActivity.swipeRefreshLayout.setRefreshing(false);
+                        }
                         break;
                     default:
                         break;
@@ -152,6 +172,15 @@ public class ChooseAreaFragment extends Fragment {
             } else if (currentLevel == LEVEL_CITY) {
                 // 返回省级列表
                 queryProvinces();
+            } else if (currentLevel == LEVEL_PROVINCE) {
+                WeatherActivity weatherActivity = (WeatherActivity) getActivity();
+                // 隐藏区域选择fragment view 界面
+                FragmentManager fragmentManager = weatherActivity.getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.hide(fragmentManager.findFragmentByTag("frag_view"));
+                transaction.commit();
+                // 返回到滑动菜单
+                weatherActivity.mNavView.setVisibility(View.VISIBLE);
             }
         });
 
@@ -162,7 +191,9 @@ public class ChooseAreaFragment extends Fragment {
      */
     private void queryProvinces() {
         titleTv.setText(R.string.province_title);
-        backBtn.setVisibility(View.GONE);
+        if (getActivity() instanceof MainActivity) {
+            backBtn.setVisibility(View.GONE);
+        }
         provinceList = LitePal.findAll(Province.class);
         if (provinceList.size() > 0) {
             // 本地数据库有省份数据
@@ -253,7 +284,7 @@ public class ChooseAreaFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.d("onChooseAreaFragment", "当前线程："+Thread.currentThread().toString());
+                Log.d("onChooseAreaFragment", "当前线程：" + Thread.currentThread().toString());
                 String responseText = response.body().string();   // json格式的省份数据
                 boolean result = false;
                 switch (type) {
@@ -261,10 +292,10 @@ public class ChooseAreaFragment extends Fragment {
                         result = Utility.handleProvinceResponse(responseText);
                         break;
                     case "city":
-                        result = Utility.handleCityResponse(responseText,selectedProvince.getProvinceCode());
+                        result = Utility.handleCityResponse(responseText, selectedProvince.getProvinceCode());
                         break;
                     case "county":
-                        result = Utility.handleCountyResponse(responseText,selectedCity.getCityCode());
+                        result = Utility.handleCountyResponse(responseText, selectedCity.getCityCode());
                         break;
                     default:
                         break;
@@ -281,7 +312,7 @@ public class ChooseAreaFragment extends Fragment {
                     });
                 } else {
                     Log.d("onChooseAreaFragment", "解析json数据成功");
-                    Log.d("onChooseAreaFragment", "mActivity信息:"+mActivity.toString());
+                    Log.d("onChooseAreaFragment", "mActivity信息:" + mActivity.toString());
                     mActivity.runOnUiThread(new Runnable() {
                         // 查询区域信息涉及到UI操作，需要从子线程切换到主线程上来处理
                         @Override
