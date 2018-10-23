@@ -1,6 +1,9 @@
 package com.coolweather.android.ui.fragment;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,7 @@ import com.coolweather.android.R;
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
+import com.coolweather.android.ui.WeatherActivity;
 import com.coolweather.android.util.HttpUtil;
 import com.coolweather.android.util.Utility;
 
@@ -36,6 +40,7 @@ import okhttp3.Response;
  * 显示省、市、县区域信息
  */
 public class ChooseAreaFragment extends Fragment {
+    private Activity mActivity;
 
     private Button backBtn;
 
@@ -81,6 +86,7 @@ public class ChooseAreaFragment extends Fragment {
     public static final int LEVEL_CITY = 1;
     public static final int LEVEL_COUNTY = 2;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -97,6 +103,8 @@ public class ChooseAreaFragment extends Fragment {
     }
 
     private void initData(View view) {
+        mActivity = getActivity();
+
         backBtn = view.findViewById(R.id.back_button);
         titleTv = view.findViewById(R.id.title_text);
         areaListView = view.findViewById(R.id.area_list_view);
@@ -118,6 +126,14 @@ public class ChooseAreaFragment extends Fragment {
                     case LEVEL_CITY:
                         selectedCity = cityList.get(position);
                         queryCounties();
+                         break;
+                    case LEVEL_COUNTY:
+                        /* 启动weather activity ，显示选定的区域的天气情况 */
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id", countyList.get(position).getWeatherId());
+                        mActivity.startActivity(intent);
+                        // mActivity.finish();
+                        break;
                     default:
                         break;
                 }
@@ -219,17 +235,17 @@ public class ChooseAreaFragment extends Fragment {
      * 根据传入的地址和类型从服务器上查询省市县的数据
      */
     private void queryFromServer(String address, final String type) {
-        showProgressDialog();
+        final ProgressDialog progressDialog = Utility.showProgressDialog(mActivity);
         // 发送网络请求
         HttpUtil.sendOkHttpRequest(address, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.d("onChooseAreaFragment", "网络请求失败");
                 // UI的变化，需要在UI线程上进行处理
-                getActivity().runOnUiThread(new Runnable() {
+                mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        closeProgressDialog();
+                        Utility.closeProgressDialog(progressDialog);
                         Toast.makeText(getContext(), "网络请求失败", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -256,20 +272,21 @@ public class ChooseAreaFragment extends Fragment {
                 if (!result) {
                     Log.d("onChooseAreaFragment", "解析json数据异常");
                     // UI的变化，需要在UI线程上进行处理
-                    getActivity().runOnUiThread(new Runnable() {
+                    mActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            closeProgressDialog();
-                            Toast.makeText(getContext(), "解析数据异常", Toast.LENGTH_LONG).show();
+                            Utility.closeProgressDialog(progressDialog);
+                            Toast.makeText(mActivity, "解析数据异常", Toast.LENGTH_LONG).show();
                         }
                     });
                 } else {
                     Log.d("onChooseAreaFragment", "解析json数据成功");
-                    getActivity().runOnUiThread(new Runnable() {
+                    Log.d("onChooseAreaFragment", "mActivity信息:"+mActivity.toString());
+                    mActivity.runOnUiThread(new Runnable() {
                         // 查询区域信息涉及到UI操作，需要从子线程切换到主线程上来处理
                         @Override
                         public void run() {
-                            closeProgressDialog();
+                            Utility.closeProgressDialog(progressDialog);
                             switch (type) {
                                 case "province":
                                     queryProvinces();
@@ -288,28 +305,6 @@ public class ChooseAreaFragment extends Fragment {
                 }
             }
         });
-    }
-
-    /**
-     * 关闭进度对话框
-     */
-    private void closeProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-    }
-
-    /**
-     * 显示网络请求数据的进度对话框
-     */
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setTitle("网络请求");
-            progressDialog.setMessage("正在加载数据...");
-            progressDialog.setCanceledOnTouchOutside(false);
-        }
-        progressDialog.show();
     }
 
 }

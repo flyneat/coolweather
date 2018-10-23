@@ -14,11 +14,11 @@ public class DailyForecast {
 
     /** 天气情况 */
     @SerializedName("cond")
-    public Now.More more;
+    public More more;
 
     public class More {
         /** 天气描述 */
-        @SerializedName("txt")
+        @SerializedName("txt_d")
         public String info;
     }
 
