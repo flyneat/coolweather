@@ -145,7 +145,7 @@ public class ChooseAreaFragment extends Fragment {
                             weatherActivity.sideLayout.removeViewAt(1);
                             // 恢复显示滑动菜单
                             weatherActivity.mNavView.setVisibility(View.VISIBLE);
-                            // 关闭侧边栏
+                            // 关闭侧滑栏
                             weatherActivity.drawerLayout.closeDrawers();
 
                             // 显示新选择的地区的天气信息

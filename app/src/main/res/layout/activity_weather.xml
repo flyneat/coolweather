@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/bing_pic_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- 主体内容 -->
+            <!-- 下拉刷新控件 -->
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none"
+                    android:overScrollMode="never">
+
+                    <LinearLayout
+                        android:id="@+id/weather_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:fitsSystemWindows="true">
+                        <!-- 引入weather的子布局 -->
+                        <include layout="@layout/weather_title"/>
+                        <include layout="@layout/now"/>
+                        <include layout="@layout/forcast"/>
+                        <include layout="@layout/aqi"/>
+                        <include layout="@layout/suggestion"/>
+                    </LinearLayout>
+                </ScrollView>
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <!-- 侧边栏布局 -->
+            <FrameLayout
+                android:id="@+id/side_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="@color/white">
+
+                <!-- 滑动菜单 -->
+                <android.support.design.widget.NavigationView
+                    android:id="@+id/nav_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    app:headerLayout="@layout/nav_header"
+                    app:menu="@menu/nav_menu" />
+
+                <!--fragment
+                    android:id="@+id/choose_area_fragment"
+                    android:name="com.coolweather.android.ui.fragment.ChooseAreaFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" /-->
+            </FrameLayout>
+        </android.support.v4.widget.DrawerLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
