@@ -24,6 +24,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // 此库添加了对操作栏用户界面设计模式的支持。此库包含对 Material Design 用户界面实现的支持
     implementation 'com.android.support:appcompat-v7:26.1.0'
 
     implementation 'com.squareup.okhttp3:okhttp:3.11.0' // 网络请求库
@@ -33,6 +34,7 @@ dependencies {
 
     implementation 'com.android.support:design:26.1.0' // 添加 Material Design library
     implementation 'de.hdodenhof:circleimageview:2.1.0' // 添加 显示圆形图片【第三方开源库】
+    implementation 'com.android.support:palette-v7:26.1.0' // Android官方提供的提取图片颜色的调色板库
 
     // 添加 ButterKnife 第三方库
     implementation 'com.jakewharton:butterknife:8.8.1'

@@ -15,11 +15,18 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
 
-        <android.support.v4.widget.DrawerLayout
-            android:id="@+id/drawer_layout"
+        <!-- 超时进度条 -->
+        <com.coolweather.android.ui.widget.TimeoutProgressBar
+            android:id="@+id/timeout_progress_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="4dp"
+            android:layout_marginTop="@dimen/status_bar_height">
+        </com.coolweather.android.ui.widget.TimeoutProgressBar>
 
+        <android.support.v4.widget.DrawerLayout
+                android:id="@+id/drawer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
             <!-- 主体内容 -->
             <!-- 下拉刷新控件 -->
             <android.support.v4.widget.SwipeRefreshLayout

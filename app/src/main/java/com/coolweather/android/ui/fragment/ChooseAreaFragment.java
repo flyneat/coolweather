@@ -137,7 +137,7 @@ public class ChooseAreaFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), WeatherActivity.class);
                             intent.putExtra("weather_id", weatheId);
                             mActivity.startActivity(intent);
-                            // mActivity.finish();
+                            mActivity.finish();
                         } else if (activity instanceof WeatherActivity) {
                             WeatherActivity weatherActivity = (WeatherActivity) activity;
 

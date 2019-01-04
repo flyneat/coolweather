@@ -7,7 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/colorAccent</item>
-
+    </style>
+    
+    <style name="styleDialog" parent="@android:style/Theme.Material.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@android:color/holo_green_light</item>
     </style>
 
 </resources>

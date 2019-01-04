@@ -44,7 +44,9 @@ public class Weather {
         builder.append("basic:{\n   cityName:"+basic.cityName+"\n   weather_id:"+basic.weatherId+
                 "\n   updateTime:"+basic.update.updateTime+"\n}\n");
         builder.append("aqi:{\n"+"  aqi:"+aqi.city.aqi+"\n  pm2.5:"+aqi.city.pm25+"\n}\n");
-        builder.append("now:{\n    温度："+now.temperature+"℃"+"\n    天气："+now.more.info+"\n}\n");
+        builder.append("now:{\n    温度："+now.temperature+"℃"+"\n"
+                +"    天气："+ now.more.info + "\n"
+                +"    天气代码："+ now.more.code +"\n}\n");
 
         builder.append("daily_forecast:[\n");
         for (DailyForecast dailyForecast : dailyForecastList) {

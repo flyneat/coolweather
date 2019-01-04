@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, WeatherActivity.class);
                 intent.putExtra("weather_id", weather.basic.weatherId);
                 startActivity(intent);
+                finish();
             }
         }
     }

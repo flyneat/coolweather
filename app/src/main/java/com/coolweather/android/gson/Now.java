@@ -17,6 +17,9 @@ public class Now {
         /** 天气描述 */
         @SerializedName("txt")
         public String info;
+
+        /** 天气代码 */
+        public String code;
     }
 
 }

@@ -23,7 +23,14 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class AutoUpdateWeatherService extends Service {
-    private static final long orignalTime = SystemClock.elapsedRealtime();
+    private long lastTime;
+    private long currentTime;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        lastTime = SystemClock.elapsedRealtime();
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -31,8 +38,8 @@ public class AutoUpdateWeatherService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        long currentTime = SystemClock.elapsedRealtime();
-        Log.d("onAutoUpdateService", "开始进行一次定时任务,时间间隔："+((currentTime-orignalTime)/1000.0)+"s");
+        currentTime = SystemClock.elapsedRealtime();
+        Log.d("onAutoUpdateService", "开始进行一次定时任务,时间间隔："+((currentTime-lastTime)/1000.0)+"s");
         updateWeather();
         updateBingPic();
         setAlarmTask();
@@ -48,6 +55,8 @@ public class AutoUpdateWeatherService extends Service {
         Intent intent = new Intent(this, AutoUpdateWeatherService.class);
         PendingIntent pi = PendingIntent.getService(this,0,intent,0);
         alarmManager.cancel(pi);
+
+        lastTime = currentTime;
         // 设定定时任务
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,pi);
     }
@@ -83,7 +92,7 @@ public class AutoUpdateWeatherService extends Service {
             HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    Log.e("onUpdateWeather", "网络连接异常");
+                    Log.w("onUpdateWeather", "网络连接异常");
                     e.printStackTrace();
                 }
 

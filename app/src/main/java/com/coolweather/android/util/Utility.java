@@ -5,6 +5,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.coolweather.android.R;
 import com.coolweather.android.db.City;
 import com.coolweather.android.db.County;
 import com.coolweather.android.db.Province;
@@ -126,7 +127,7 @@ public class Utility {
      * 网络请求数据时显示进度对话框
      */
     public static ProgressDialog showProgressDialog(Context context) {
-        ProgressDialog progressDialog = new ProgressDialog(context);
+        ProgressDialog progressDialog = new ProgressDialog(context,R.style.styleDialog);
         progressDialog.setTitle("网络请求");
         progressDialog.setMessage("正在加载数据...");
         progressDialog.setCanceledOnTouchOutside(false);
